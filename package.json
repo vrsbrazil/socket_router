@@ -1,6 +1,6 @@
 {
-  "name": "socket_router",
-  "version": "1.0.0",
+  "name": "@vrsbrazil/socket_router",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {

@@ -106,11 +106,21 @@ function connection_handler(io){
 
   }
 
+  function routeStream(socket, connection_name, value, direction){
+
+    value.service = connection_name;
+    value.direction = direction;
+
+    io.to('stream').emit('message',value);
+
+  }
+
   function clientconnectionWatcher(socket,connection_name){
 
     socket.on('request', function(value) {
 
       routeRequest(value, connection_name, socket);
+      routeStream(socket, connection_name, value, 'request');
 
     });
 
@@ -129,6 +139,7 @@ function connection_handler(io){
       console.log("Service responded on " + connection_name);
 
       routeResponse(value, connection_name, socket);
+      routeStream(socket, connection_name, value, 'response');
 
     });
 
@@ -194,6 +205,12 @@ function connection_handler(io){
 
   }
 
+  function streamRole(socket, connection){
+
+    socket.join('stream');
+
+  }
+
   function checkRole(socket, connection){
 
     if(!connection.name){
@@ -210,8 +227,11 @@ function connection_handler(io){
       case 'server':
         serverRole(socket, connection);
       break;
+      case 'stream':
+        streamRole(socket, connection);
+      break;
       default:
-        throw new Error("connection.role is not recognized, accepted values: client, server");
+        throw new Error("connection.role is not recognized, accepted values: client, server, stream");
     }
 
   }
